@@ -1,4 +1,6 @@
 argo-cd:
+  crds:
+    keep: false
   dex:
     enabled: false
   server:
@@ -9,3 +11,4 @@ argo-cd:
         - type: helm
           name: argo-cd
           url: https://argoproj.github.io/argo-helm
+
