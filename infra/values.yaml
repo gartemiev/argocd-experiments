@@ -1,6 +1,6 @@
 applications:
  - name: guestbook
-   namespace: argocd
+   namespace: argo-cd
    finalizers:
    - resources-finalizer.argocd.argoproj.io
    project: default
@@ -8,6 +8,39 @@ applications:
      repoURL: https://github.com/argoproj/argocd-example-apps.git
      targetRevision: HEAD
      path: helm-guestbook
-     directory:
-       recurse: true
+     helm:
+       releaseName: guestbook
+       valueFiles:
+         - values.yaml
+   destination:
+     server: https://kubernetes.default.svc
+     namespace: guestbook
+   syncPolicy:
+     automated:
+       prune: true
+       selfHeal: true
+     syncOptions:
+       - CreateNamespace=true
 
+ - name: wordpress
+   namespace: argo-cd
+   finalizers:
+     - resources-finalizer.argocd.argoproj.io
+   project: default
+   source:
+     repoURL: https://github.com/argoproj/argocd-example-apps.git
+     targetRevision: HEAD
+     path: helm-dependency
+     helm:
+       releaseName: wordpress
+       valueFiles:
+         - values.yaml
+   destination:
+     server: https://kubernetes.default.svc
+     namespace: wordpress
+   syncPolicy:
+     automated:
+       prune: true
+       selfHeal: true
+     syncOptions:
+       - CreateNamespace=true
