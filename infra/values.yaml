@@ -1,0 +1,13 @@
+applications:
+ - name: guestbook
+   namespace: argocd
+   finalizers:
+   - resources-finalizer.argocd.argoproj.io
+   project: default
+   source:
+     repoURL: https://github.com/argoproj/argocd-example-apps.git
+     targetRevision: HEAD
+     path: helm-guestbook
+     directory:
+       recurse: true
+
