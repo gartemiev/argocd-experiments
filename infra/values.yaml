@@ -1,46 +1,56 @@
-applications:
+#applications:
+# - name: guestbook
+#   namespace: argo-cd
+#   finalizers:
+#   - resources-finalizer.argocd.argoproj.io
+#   project: default
+#   source:
+#     repoURL: https://github.com/argoproj/argocd-example-apps.git
+#     targetRevision: HEAD
+#     path: helm-guestbook
+#     helm:
+#       releaseName: guestbook
+#       valueFiles:
+#         - values.yaml
+#   destination:
+#     server: https://kubernetes.default.svc
+#     namespace: guestbook
+#   syncPolicy:
+#     automated:
+#       prune: true
+#       selfHeal: true
+#     syncOptions:
+#       - CreateNamespace=true
+
+applicationsets:
  - name: guestbook
    namespace: argo-cd
-   finalizers:
-   - resources-finalizer.argocd.argoproj.io
-   project: default
-   source:
-     repoURL: https://github.com/argoproj/argocd-example-apps.git
-     targetRevision: HEAD
-     path: helm-guestbook
-     helm:
-       releaseName: guestbook
-       valueFiles:
-         - values.yaml
-   destination:
-     server: https://kubernetes.default.svc
-     namespace: guestbook
+   goTemplate: false
+   generators:
+   - git:
+       repoURL: https://github.com/argoproj/argocd-example-apps.git
+       revision: HEAD
+       directories:
+       - path: guestbook
+       - path: kustomize-*
+   template:
+     metadata:
+       name: '{{path.basename}}'
+     spec:
+       project: default
+       source:
+         repoURL: https://github.com/argoproj/argocd-example-apps.git
+         targetRevision: HEAD
+         path: '{{path}}'
+       destination:
+         server: https://kubernetes.default.svc
+         namespace: '{{path.basename}}'
+       syncPolicy:
+         automated:
+           prune: true
+           selfHeal: true
    syncPolicy:
-     automated:
-       prune: true
-       selfHeal: true
      syncOptions:
        - CreateNamespace=true
-
- - name: wordpress
-   namespace: argo-cd
-   finalizers:
-     - resources-finalizer.argocd.argoproj.io
-   project: default
-   source:
-     repoURL: https://github.com/argoproj/argocd-example-apps.git
-     targetRevision: HEAD
-     path: helm-dependency
-     helm:
-       releaseName: wordpress
-       valueFiles:
-         - values.yaml
-   destination:
-     server: https://kubernetes.default.svc
-     namespace: wordpress
-   syncPolicy:
-     automated:
-       prune: true
-       selfHeal: true
-     syncOptions:
-       - CreateNamespace=true
+     # Set Application finalizer
+     preserveResourcesOnDeletion: false
