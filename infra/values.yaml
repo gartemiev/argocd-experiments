@@ -23,32 +23,32 @@
 #       - CreateNamespace=true
 
 applicationsets:
- - name: guestbook
-   namespace: argo-cd
-   goTemplate: false
-   generators:
-   - git:
-       repoURL: https://github.com/argoproj/argocd-example-apps.git
-       revision: HEAD
-       directories:
-       - path: guestbook
-       - path: kustomize-*
-   template:
-     metadata:
-       name: '{{path.basename}}'
-     spec:
-       project: default
-       source:
-         repoURL: https://github.com/argoproj/argocd-example-apps.git
-         targetRevision: HEAD
-         path: '{{path}}'
-       destination:
-         server: https://kubernetes.default.svc
-         namespace: '{{path.basename}}'
-       syncPolicy:
-         automated:
-           prune: true
-           selfHeal: true
+# - name: guestbook
+#   namespace: argo-cd
+#   goTemplate: false
+#   generators:
+#   - git:
+#       repoURL: https://github.com/argoproj/argocd-example-apps.git
+#       revision: HEAD
+#       directories:
+#       - path: guestbook
+#       - path: kustomize-*
+#   template:
+#     metadata:
+#       name: '{{path.basename}}'
+#     spec:
+#       project: default
+#       source:
+#         repoURL: https://github.com/argoproj/argocd-example-apps.git
+#         targetRevision: HEAD
+#         path: '{{path}}'
+#       destination:
+#         server: https://kubernetes.default.svc
+#         namespace: '{{path.basename}}'
+#       syncPolicy:
+#         automated:
+#           prune: true
+#           selfHeal: true
  - name: public-infra-helmcharts
    namespace: argo-cd
    goTemplate: false
