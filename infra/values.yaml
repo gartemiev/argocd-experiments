@@ -49,6 +49,38 @@ applicationsets:
          automated:
            prune: true
            selfHeal: true
+ - name: public-infra-helmcharts
+   namespace: argo-cd
+   goTemplate: false
+   generators:
+     - list:
+         elements:
+          - publicrepoURL: https://argoproj.github.io/argo-helm
+            publicRevision: 0.9.1
+            appName: argocd-image-updater
+            namespace: argo-cd
+   template:
+     metadata:
+       name: '{{ appName }}'
+     spec:
+       project: default
+       sources:
+         - repoURL: '{{ publicrepoURL }}'
+           targetRevision: '{{ publicRevision }}'
+           chart: argocd-image-updater
+           helm:
+             valueFiles:
+               - $values/infra/{{ appName }}/values.yaml
+         - repoURL: https://github.com/gartemiev/argocd-experiments.git
+           targetRevision: HEAD
+           ref: values
+       destination:
+         server: https://kubernetes.default.svc
+         namespace: '{{ namespace }}'
+       syncPolicy:
+         automated:
+           prune: true
+           selfHeal: true
    syncPolicy:
      syncOptions:
        - CreateNamespace=true
