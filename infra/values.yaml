@@ -23,42 +23,52 @@
 #       - CreateNamespace=true
 
 applicationsets:
-# - name: guestbook
-#   namespace: argo-cd
-#   goTemplate: false
-#   generators:
-#   - git:
-#       repoURL: https://github.com/argoproj/argocd-example-apps.git
-#       revision: HEAD
-#       directories:
-#       - path: guestbook
-#       - path: kustomize-*
-#   template:
-#     metadata:
-#       name: '{{path.basename}}'
-#     spec:
-#       project: default
-#       source:
-#         repoURL: https://github.com/argoproj/argocd-example-apps.git
-#         targetRevision: HEAD
-#         path: '{{path}}'
-#       destination:
-#         server: https://kubernetes.default.svc
-#         namespace: '{{path.basename}}'
-#       syncPolicy:
-#         automated:
-#           prune: true
-#           selfHeal: true
+ - name: custom-infra-charts
+   namespace: argo-cd
+   goTemplate: false
+   generators:
+   - git:
+       repoURL: https://github.com/gartemiev/argocd-experiments.git
+       revision: HEAD
+       directories:
+       - path: infra/argocd-image-updater
+   template:
+     metadata:
+       name: '{{path.basename}}'
+     spec:
+       project: default
+       source:
+         repoURL: https://github.com/gartemiev/argocd-experiments.git
+         targetRevision: HEAD
+         path: '{{ path }}'
+         chart: '{{path.basename}}'
+       destination:
+         server: https://kubernetes.default.svc
+         namespace: '{{ path.basename }}'
+       syncPolicy:
+         automated:
+           prune: true
+           selfHeal: true
+   syncPolicy:
+     syncOptions:
+       - CreateNamespace=true
+     # Set Application finalizer
+     preserveResourcesOnDeletion: false
+
  - name: public-infra-helmcharts
    namespace: argo-cd
    goTemplate: false
    generators:
      - list:
          elements:
-          - publicrepoURL: https://argoproj.github.io/argo-helm
-            publicRevision: 0.9.1
-            appName: argocd-image-updater
-            namespace: argo-cd
+#          - publicrepoURL: https://argoproj.github.io/argo-helm
+#            publicRevision: 0.9.1
+#            appName: argocd-image-updater
+#            namespace: argo-cd
+          - publicrepoURL: https://bitnami-labs.github.io/sealed-secrets
+            publicRevision: 2.11.0
+            appName: sealed-secrets
+            namespace: sealed-secrets
    template:
      metadata:
        name: '{{ appName }}'
@@ -67,7 +77,7 @@ applicationsets:
        sources:
          - repoURL: '{{ publicrepoURL }}'
            targetRevision: '{{ publicRevision }}'
-           chart: argocd-image-updater
+           chart: '{{ appName }}'
            helm:
              valueFiles:
                - $values/infra/{{ appName }}/values.yaml
@@ -78,6 +88,8 @@ applicationsets:
          server: https://kubernetes.default.svc
          namespace: '{{ namespace }}'
        syncPolicy:
+         syncOptions:
+           - CreateNamespace=true
          automated:
            prune: true
            selfHeal: true
