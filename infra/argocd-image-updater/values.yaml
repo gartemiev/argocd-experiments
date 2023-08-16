@@ -41,12 +41,12 @@ config:
   logLevel: "info"
 
   # -- ArgoCD Image Updater registries list configuration. More information [here](https://argocd-image-updater.readthedocs.io/en/stable/configuration/registries/)
-#  registries:
-#     - name: Docker Hub
-#       api_url: https://registry-1.docker.io
-#       ping: yes
-#       credentials: secret:foo/bar#creds
-#       defaultns: library
+  registries:
+     - name: Docker Hub
+       api_url: https://registry-1.docker.io
+       ping: yes
+       credentials: secret:argocd-image-updater/dockerhub#token
+       defaultns: library
 
   # -- ArgoCD Image Updater ssh client parameter configuration.
   sshConfig:

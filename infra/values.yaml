@@ -41,11 +41,56 @@ applicationsets:
          repoURL: https://github.com/gartemiev/argocd-experiments.git
          targetRevision: HEAD
          path: '{{ path }}'
-         chart: '{{path.basename}}'
+         helm:
+           releaseName: '{{ path.basename }}'
+           valueFiles:
+            - values.yaml
        destination:
          server: https://kubernetes.default.svc
          namespace: '{{ path.basename }}'
        syncPolicy:
+         syncOptions:
+           - CreateNamespace=true
+         automated:
+           prune: true
+           selfHeal: true
+   syncPolicy:
+     syncOptions:
+       - CreateNamespace=true
+     # Set Application finalizer
+     preserveResourcesOnDeletion: false
+
+ - name: image-updater-custom-charts
+   namespace: argo-cd
+   goTemplate: false
+   generators:
+   - git:
+       repoURL: https://github.com/gartemiev/argocd-experiments.git
+       revision: HEAD
+       directories:
+       - path: infra/nginx
+   template:
+     metadata:
+       name: '{{path.basename}}'
+       annotations:
+         argocd-image-updater.argoproj.io/image-list: george547/nginx:~v1.0
+         argocd-image-updater.argoproj.io/write-back-method: git
+     spec:
+       project: default
+       source:
+         repoURL: https://github.com/gartemiev/argocd-experiments.git
+         targetRevision: HEAD
+         path: '{{ path }}'
+         helm:
+           releaseName: '{{ path.basename }}'
+           valueFiles:
+            - values.yaml
+       destination:
+         server: https://kubernetes.default.svc
+         namespace: '{{ path.basename }}'
+       syncPolicy:
+         syncOptions:
+           - CreateNamespace=true
          automated:
            prune: true
            selfHeal: true
