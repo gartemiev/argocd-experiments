@@ -65,7 +65,7 @@ applicationsets:
    goTemplate: false
    generators:
    - git:
-       repoURL: https://github.com/gartemiev/argocd-experiments.git
+       repoURL: git@github.com:gartemiev/argocd-experiments.git
        revision: HEAD
        directories:
        - path: infra/nginx
@@ -74,13 +74,12 @@ applicationsets:
        name: '{{path.basename}}'
        annotations:
          argocd-image-updater.argoproj.io/image-list: george547/nginx:~v1.0
-         argocd-image-updater.argoproj.io/app-version.pull-secret: secret:argo-cd/dockerhub#token
-         argocd-image-updater.argoproj.io/write-back-method: git:secret:argo-cd/github
+         argocd-image-updater.argoproj.io/write-back-method: git
          argocd-image-updater.argoproj.io/git-branch: master
      spec:
        project: default
        source:
-         repoURL: https://github.com/gartemiev/argocd-experiments.git
+         repoURL: git@github.com:gartemiev/argocd-experiments.git
          targetRevision: HEAD
          path: '{{ path }}'
          helm:
