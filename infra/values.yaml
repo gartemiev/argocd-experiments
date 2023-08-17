@@ -47,7 +47,7 @@ applicationsets:
             - values.yaml
        destination:
          server: https://kubernetes.default.svc
-         namespace: '{{ path.basename }}'
+         namespace: argo-cd
        syncPolicy:
          syncOptions:
            - CreateNamespace=true
@@ -74,7 +74,9 @@ applicationsets:
        name: '{{path.basename}}'
        annotations:
          argocd-image-updater.argoproj.io/image-list: george547/nginx:~v1.0
-         argocd-image-updater.argoproj.io/write-back-method: git
+         argocd-image-updater.argoproj.io/app-version.pull-secret: secret:argo-cd/dockerhub#token
+         argocd-image-updater.argoproj.io/write-back-method: git:secret:argo-cd/github
+         argocd-image-updater.argoproj.io/git-branch: master
      spec:
        project: default
        source:

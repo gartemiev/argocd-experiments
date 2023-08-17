@@ -45,7 +45,7 @@ config:
      - name: Docker Hub
        api_url: https://registry-1.docker.io
        ping: yes
-       credentials: secret:argocd-image-updater/dockerhub#token
+       credentials: secret:argo-cd/dockerhub#token
        defaultns: library
 
   # -- ArgoCD Image Updater ssh client parameter configuration.
